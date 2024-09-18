@@ -6,19 +6,26 @@ local function DebugPrint(message)
     end
 end
 
-local function CreateBlip()
-    local blip = AddBlipForCoord(Config.JobCenterLocation.x, Config.JobCenterLocation.y, Config.JobCenterLocation.z)
+Citizen.CreateThread(function()
+    DebugPrint("Starting Job Center blip creation.")
+    local blip = AddBlipForCoord(Config.JobCenterBlip.coords)
     SetBlipSprite(blip, Config.JobCenterBlip.sprite)
-    SetBlipColour(blip, Config.JobCenterBlip.color)
+    SetBlipDisplay(blip, 4)
     SetBlipScale(blip, Config.JobCenterBlip.scale)
+    SetBlipColour(blip, Config.JobCenterBlip.color)
+    SetBlipAsShortRange(blip, true)
+
     BeginTextCommandSetBlipName("STRING")
-    AddTextComponentSubstringPlayerName(Config.JobCenterBlip.name)
+    AddTextComponentString(Config.JobCenterBlip.name)
     EndTextCommandSetBlipName(blip)
-end
+    DebugPrint("Blip for Job Center created successfully.")
+end)
 
 local function SetupNPC(npcModel, jobCenterCoords)
+    DebugPrint("Setting up NPC: " .. npcModel)
     RequestModel(GetHashKey(npcModel))
     while not HasModelLoaded(GetHashKey(npcModel)) do
+        DebugPrint("Waiting for NPC model to load.")
         Wait(10)
     end
 
@@ -26,10 +33,12 @@ local function SetupNPC(npcModel, jobCenterCoords)
     SetEntityInvincible(npcPed, true)
     SetBlockingOfNonTemporaryEvents(npcPed, true)
     TaskStartScenarioInPlace(npcPed, "WORLD_HUMAN_CLIPBOARD", 0, true)
+    DebugPrint("NPC created successfully at coordinates: " .. jobCenterCoords.x .. ", " .. jobCenterCoords.y .. ", " .. jobCenterCoords.z)
     return npcPed
 end
 
 local function SetupTargeting(npcPed)
+    DebugPrint("Setting up targeting system for NPC.")
     local targetSystem = Config.Target
     if exports[targetSystem] then
         local targetFunc = targetSystem == 'drawtext' and function()
@@ -60,20 +69,25 @@ local function SetupTargeting(npcPed)
         end
 
         targetFunc()
+        DebugPrint("Targeting system set up successfully.")
+    else
+        DebugPrint("Targeting system not found: " .. targetSystem)
     end
 end
 
 CreateThread(function()
-    CreateBlip()
+    DebugPrint("Initializing NPC and targeting system setup.")
     local npcPed = SetupNPC(Config.NPC.model, Config.JobCenterLocation)
     SetupTargeting(npcPed)
 end)
 
 local function RegisterJobOptions(playerData)
+    DebugPrint("Registering job options for player.")
     local jobOptions = {}
     local playerJob = playerData.job.name
 
     if playerJob and playerJob ~= 'unemployed' then
+        DebugPrint("Player is employed. Adding 'Toggle Duty' option.")
         table.insert(jobOptions, {
             title = "Toggle Duty",
             description = "Toggle your duty status.",
@@ -82,6 +96,7 @@ local function RegisterJobOptions(playerData)
         })
         QBCore.Functions.Notify("You are currently employed. You can only toggle your duty status.", "info")
     else
+        DebugPrint("Player is unemployed. Adding available job options.")
         for _, job in pairs(Config.Jobs) do
             table.insert(jobOptions, {
                 title = job.label,
@@ -106,27 +121,33 @@ local function RegisterJobOptions(playerData)
         options = jobOptions,
         menu = 'main'
     })
-    DebugPrint("Menu registered with options.")
+    DebugPrint("Menu registered with job options.")
     lib.showContext('job_center_menu')
 end
 
 RegisterNetEvent('inverse-jobcenter:client:openMenu', function()
+    DebugPrint("Opening job center menu.")
     QBCore.Functions.GetPlayerData(RegisterJobOptions)
 end)
 
 RegisterNetEvent('inverse-jobcenter:client:applyJob', function(jobName)
+    DebugPrint("Applying for job: " .. tostring(jobName))
     if not jobName or type(jobName) ~= "string" or jobName == "" then
+        DebugPrint("Invalid job name provided.")
         return QBCore.Functions.Notify("Invalid job name", "error")
     end
 
     local job = QBCore.Shared.Jobs[jobName]
     if job then
-        TriggerServerEvent('inverse-jobcenter:server:applyJob', jobName, job.defaultGrade or 0)  
+        DebugPrint("Job exists. Triggering server event to apply job: " .. jobName)
+        TriggerServerEvent('inverse-jobcenter:server:applyJob', jobName, job.defaultGrade or 0)
     else
+        DebugPrint("Job does not exist: " .. jobName)
         QBCore.Functions.Notify("Job does not exist.", "error")
     end
 end)
 
 RegisterNetEvent('inverse-jobcenter:client:toggleDuty', function()
+    DebugPrint("Toggling duty status.")
     TriggerServerEvent('inverse-jobcenter:server:toggleDuty')
 end)

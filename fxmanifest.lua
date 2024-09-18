@@ -31,10 +31,3 @@ dependencies {
     -- 'ox_target',  -- Uncomment if using ox_target
     -- 'qtarget'     -- Uncomment if using qtarget
 }
-
--- Define any dependencies that need to be loaded before this resource
-dependency 'qb-core'
-dependency 'ox_lib'
-dependency 'qb-target'
--- dependency 'ox_target' -- Uncomment if using ox_target
--- dependency 'qtarget'    -- Uncomment if using qtarget
