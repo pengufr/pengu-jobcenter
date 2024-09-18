@@ -13,8 +13,8 @@ Config = {
         scale = 1,
         name = 'Job Center',
     },
-    Jobs = {
-        { name = 'builder', label = 'Builder', description = 'Builds Stuff', licenseItem = 'builder_license' },
-        { name = 'garbage', label = 'Garbage Collector', description = 'Collects Garbage', licenseItem = 'garbage_license' },
+    Jobs = { -- Add Your Job Details Here
+        -- { name = 'builder', label = 'Builder', description = 'Builds Stuff', licenseItem = 'builder_license' }, -- EXAMPLE
+        -- { name = 'garbage', label = 'Garbage Collector', description = 'Collects Garbage', licenseItem = 'garbage_license' }, -- EXAMPLE
     }
 }
