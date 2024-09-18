@@ -29,6 +29,7 @@ dependencies {
     'qb-core',    -- Essential for QBCore functionalities
     'ox_lib',     -- For menu handling (if using ox_lib)
     'qb-target',  -- For qb-target functionalities (if used)
+    'qb-menu',    -- For qb-menu functionalities (if used)
     -- 'ox_target',  -- Uncomment if using ox_target
     -- 'qtarget'     -- Uncomment if using qtarget
 }

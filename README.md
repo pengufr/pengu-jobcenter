@@ -4,6 +4,7 @@
 * [qb-core](https://github.com/qbcore-framework/qb-core)
 * [ox_lib](https://github.com/overextended/ox_lib)
 * [qb-target](https://github.com/qbcore-framework/qb-target)
+* [qb-menu](https://github.com/qbcore-framework/qb-menu)
 
 ## Optional Dependancy (fxmanifest.lua)
 * [ox_target](https://github.com/overextended/ox_target)

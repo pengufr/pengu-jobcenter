@@ -23,7 +23,7 @@ local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, job
         },
         {
             title = "Apply for this job",
-            event = 'inverse-jobcenter:client:applyJob',
+            event = 'pengu-jobcenter:client:applyJob',
             args = jobName
         }
     }
@@ -85,7 +85,7 @@ local function SetupTargeting(npcPed)
                         DrawText3D(Config.JobCenterLocation.x, Config.JobCenterLocation.y, Config.JobCenterLocation.z,
                             "[E] Browse Jobs")
                         if IsControlJustReleased(0, 38) then
-                            TriggerEvent('inverse-jobcenter:client:openMenu')
+                            TriggerEvent('pengu-jobcenter:client:openMenu')
                         end
                     end
                     Wait(0)
@@ -95,7 +95,7 @@ local function SetupTargeting(npcPed)
             local options = {
                 {
                     type = "client",
-                    event = "inverse-jobcenter:client:openMenu",
+                    event = "pengu-jobcenter:client:openMenu",
                     icon = "fas fa-briefcase",
                     label = "Browse Jobs",
                 }
@@ -138,7 +138,7 @@ local function RegisterJobOptions(playerData)
             title = "Toggle Duty",
             description = "Toggle your duty status.",
             icon = 'fas fa-user-clock',
-            event = 'inverse-jobcenter:client:toggleDuty'
+            event = 'pengu-jobcenter:client:toggleDuty'
         })
         QBCore.Functions.Notify("You are currently employed. You can only toggle your duty status.", "info")
     else
@@ -152,7 +152,7 @@ local function RegisterJobOptions(playerData)
                 title = jobLabel,
                 description = jobDescription,
                 icon = configJob.icon or 'fas fa-briefcase',
-                event = 'inverse-jobcenter:client:showJobInformation',
+                event = 'pengu-jobcenter:client:showJobInformation',
                 args = {
                     name = configJob.name,
                     label = jobLabel,
@@ -173,12 +173,12 @@ local function RegisterJobOptions(playerData)
     lib.showContext('job_center_menu')
 end
 
-RegisterNetEvent('inverse-jobcenter:client:openMenu', function()
+RegisterNetEvent('pengu-jobcenter:client:openMenu', function()
     DebugPrint("Opening job center menu.")
     QBCore.Functions.GetPlayerData(RegisterJobOptions)
 end)
 
-RegisterNetEvent('inverse-jobcenter:client:showJobInformation', function(job)
+RegisterNetEvent('pengu-jobcenter:client:showJobInformation', function(job)
     DebugPrint("Showing information for job: " .. job.name)
     local qbJob = QBCore.Shared.Jobs[job.name]
     if qbJob then
@@ -194,7 +194,7 @@ RegisterNetEvent('inverse-jobcenter:client:showJobInformation', function(job)
     end
 end)
 
-RegisterNetEvent('inverse-jobcenter:client:applyJob', function(jobName)
+RegisterNetEvent('pengu-jobcenter:client:applyJob', function(jobName)
     DebugPrint("Applying for job: " .. tostring(jobName))
     if not jobName or type(jobName) ~= "string" or jobName == "" then
         DebugPrint("Invalid job name provided.")
@@ -204,18 +204,18 @@ RegisterNetEvent('inverse-jobcenter:client:applyJob', function(jobName)
     local job = QBCore.Shared.Jobs[jobName]
     if job then
         DebugPrint("Job exists. Triggering server event to apply job: " .. jobName)
-        TriggerServerEvent('inverse-jobcenter:server:applyJob', jobName, 0)
+        TriggerServerEvent('pengu-jobcenter:server:applyJob', jobName, 0)
     else
         DebugPrint("Job does not exist: " .. jobName)
         QBCore.Functions.Notify("Job does not exist.", "error")
     end
 end)
 
-RegisterNetEvent('inverse-jobcenter:client:toggleDuty', function()
+RegisterNetEvent('pengu-jobcenter:client:toggleDuty', function()
     DebugPrint("Toggling duty status.")
-    TriggerServerEvent('inverse-jobcenter:server:toggleDuty')
+    TriggerServerEvent('pengu-jobcenter:server:toggleDuty')
 end)
 
-RegisterNetEvent('inverse-jobcenter:client:promote', function(newRank, jobName)
+RegisterNetEvent('pengu-jobcenter:client:promote', function(newRank, jobName)
     QBCore.Functions.Notify("Congrats! You've been promoted to rank " .. newRank .. " in " .. jobName .. "!", "success")
 end)

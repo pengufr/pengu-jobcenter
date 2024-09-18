@@ -8,7 +8,7 @@ local function GetJobByName(jobName)
     return QBCore.Shared.Jobs[jobName] or nil
 end
 
-RegisterNetEvent('inverse-jobcenter:server:applyJob', function(jobName, defaultGrade)
+RegisterNetEvent('pengu-jobcenter:server:applyJob', function(jobName, defaultGrade)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -44,7 +44,7 @@ RegisterNetEvent('inverse-jobcenter:server:applyJob', function(jobName, defaultG
     end
 end)
 
-RegisterNetEvent('inverse-jobcenter:server:removeJob', function()
+RegisterNetEvent('pengu-jobcenter:server:removeJob', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -91,7 +91,7 @@ function NotifyPlayer(playerId, message, type)
 end
 
 
-RegisterNetEvent('inverse-jobcenter:server:toggleDuty', function()
+RegisterNetEvent('pengu-jobcenter:server:toggleDuty', function()
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
 
@@ -117,7 +117,7 @@ local function NotifyPlayer(playerId, message, messageType)
     TriggerClientEvent('QBCore:Notify', playerId, message, messageType)
 end
 
-RegisterNetEvent('inverse-jobcenter:server:promotePlayer', function()
+RegisterNetEvent('pengu-jobcenter:server:promotePlayer', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -135,7 +135,7 @@ RegisterNetEvent('inverse-jobcenter:server:promotePlayer', function()
                     Player.Functions.SetJob(jobName, nextRank)
                     NotifyPlayer(src, "Congratulations! You've been promoted to rank " .. nextRank .. " in " .. jobName,
                         "success")
-                    TriggerClientEvent('inverse-jobcenter:client:promote', src, nextRank, jobName)
+                    TriggerClientEvent('pengu-jobcenter:client:promote', src, nextRank, jobName)
                 else
                     NotifyPlayer(src, "You have reached the highest rank in your job.", "info")
                 end

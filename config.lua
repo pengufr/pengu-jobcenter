@@ -1,6 +1,6 @@
 Config = {
     Target = 'qb-target',                                      -- Options: qb-target, ox_target, qtarget, drawtext
-    Menu = 'inverse-oxlib',                                    -- Options: qb-menu, ox_lib
+    Menu = 'ox_lib',                                    -- Options: qb-menu, ox_lib
     JobCenterLocation = vector4(-267.58, -959.16, 31.22, 211), -- Job center coordinates
     Debug = true,                                              -- Enable debug messages
     NPC = {
