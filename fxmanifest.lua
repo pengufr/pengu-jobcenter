@@ -15,6 +15,7 @@ shared_script {
 
 -- Client-side scripts
 client_scripts {
+    'config.lua',          -- Configuration file for client
     'client/client.lua',   -- Main client script
 }
 
