@@ -8,15 +8,15 @@ Duty Toggle: Players can toggle their duty status.
 
 Installation Guide
 
-1. Add 'ensure pengu-jobcenter' to your server.cfg
+1. Check Dependencies located in the fxmanifest.lua
 
-2. Check Dependencies located in the fxmanifest.lua
-
-3. Configure the script 
+2. Configure the script 
     - Edit the config.lua file in the pengu-jobcenter folder to customize the job center settings, including job definitions, NPC configurations, 
     and license names
     - Make sure your license items in the config.lua are added and located in the qb-core/shared/items.lua and in your qb-inventory/config.lua
     - Make sure the jobs you add in the config.lua are added in the qb-core/shared/jobs.lua 
+
+3. Add 'ensure pengu-jobcenter' to your server.cfg
 
 4. Start your server, ENJOY!
 
