@@ -22,7 +22,7 @@
 
 ## Installation Guide | Version 1.0.0
 
-## 3: Instert the SQL located in sql/jobcenter.sql
+## 1: Instert the SQL located in sql/jobcenter.sql
 
 ## 2: In your qb-core/shared/items.lua add the following code:
 
