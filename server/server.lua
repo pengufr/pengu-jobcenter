@@ -19,7 +19,7 @@ RegisterNetEvent('pengu-jobcenter:server:applyJob', function(jobName, defaultGra
             if job then
                 NotifyPlayer(src, "Applying for job... Please wait.", "info")
 
-                Wait(10000) 
+                Wait(10000)
 
                 Player.Functions.SetJob(jobName, defaultGrade)
 
@@ -90,7 +90,6 @@ function NotifyPlayer(playerId, message, type)
     TriggerClientEvent('QBCore:Notify', playerId, message, type)
 end
 
-
 RegisterNetEvent('pengu-jobcenter:server:toggleDuty', function()
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
@@ -129,7 +128,7 @@ RegisterNetEvent('pengu-jobcenter:server:promotePlayer', function()
 
             if jobDetails then
                 local nextRank = currentRank + 1
-                local rankCount = #jobDetails.grades 
+                local rankCount = #jobDetails.grades
 
                 if nextRank <= rankCount then
                     Player.Functions.SetJob(jobName, nextRank)

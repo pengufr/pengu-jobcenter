@@ -7,7 +7,9 @@ local function DebugPrint(message)
 end
 
 local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, jobRank)
-    jobRank = jobRank or "Not Defined" 
+    jobRank = jobRank or "Not Defined"
+    local job = Config.Jobs[jobName] or {}
+
     local jobDetails = {
         {
             title = "Job Name: " .. jobLabel,
@@ -18,7 +20,7 @@ local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, job
             description = "Current rank for this job."
         },
         {
-            title = "Starting Pay: $" .. jobPay,
+            title = "Starting Pay: $" .. (jobPay or 0),
             description = "Your Starting Pay Until Promotion"
         },
         {
@@ -67,7 +69,7 @@ local function SetupNPC(npcModel, jobCenterCoords)
     FreezeEntityPosition(npcPed, true)
     TaskStartScenarioInPlace(npcPed, "WORLD_HUMAN_CLIPBOARD", 0, true)
     DebugPrint("NPC created successfully at coordinates: " ..
-    jobCenterCoords.x .. ", " .. jobCenterCoords.y .. ", " .. jobCenterCoords.z)
+        jobCenterCoords.x .. ", " .. jobCenterCoords.y .. ", " .. jobCenterCoords.z)
     return npcPed
 end
 
@@ -119,7 +121,7 @@ end)
 local function GetJobRank(playerJob, jobName)
     if playerJob and jobName and QBCore.Shared.Jobs[jobName] then
         local jobGrades = QBCore.Shared.Jobs[jobName].grades
-        local playerGrade = playerJob.grade or '0' 
+        local playerGrade = playerJob.grade or '0'
         local jobGradeInfo = jobGrades[tostring(playerGrade)]
         return jobGradeInfo and jobGradeInfo.name or "Unknown Rank"
     end
@@ -146,7 +148,7 @@ local function RegisterJobOptions(playerData)
         for _, configJob in pairs(Config.Jobs) do
             local jobLabel = configJob.label
             local jobDescription = configJob.description
-            local jobRank = "Not Defined" 
+            local jobRank = "Not Defined"
 
             table.insert(jobOptions, {
                 title = jobLabel,
@@ -157,7 +159,7 @@ local function RegisterJobOptions(playerData)
                     name = configJob.name,
                     label = jobLabel,
                     description = jobDescription,
-                    startingRank = jobRank 
+                    startingRank = jobRank
                 }
             })
         end
@@ -196,18 +198,55 @@ end)
 
 RegisterNetEvent('pengu-jobcenter:client:applyJob', function(jobName)
     DebugPrint("Applying for job: " .. tostring(jobName))
+
     if not jobName or type(jobName) ~= "string" or jobName == "" then
         DebugPrint("Invalid job name provided.")
         return QBCore.Functions.Notify("Invalid job name", "error")
     end
 
+    local playerPed = PlayerPedId()
+    FreezeEntityPosition(playerPed, true)
+    RequestAnimDict("missfam4")
+    while not HasAnimDictLoaded("missfam4") do
+        Wait(10)
+    end
+    TaskPlayAnim(playerPed, "missfam4", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
+
     local job = QBCore.Shared.Jobs[jobName]
     if job then
         DebugPrint("Job exists. Triggering server event to apply job: " .. jobName)
         TriggerServerEvent('pengu-jobcenter:server:applyJob', jobName, 0)
+
+        exports['ox_lib']:progressBar({
+            duration = 9650,
+            label = 'Applying for ' .. (job.label or 'Unknown Job'),
+            useWhileDead = false,
+            canCancel = false,
+            disable = {
+                car = true,
+                move = true,
+                mouse = false,
+            },
+            anim = {
+                animDict = 'missfam4',
+                anim = 'base',
+            },
+            prop = {
+                model = 'prop_clipboard',
+                bone = 60309,
+                coords = vector3(0.0, 0.0, 0.0),
+                rotation = vector3(0.0, 0.0, 0.0),
+            },
+        })
+
+        ClearPedTasks(playerPed)
+        FreezeEntityPosition(playerPed, false)
     else
         DebugPrint("Job does not exist: " .. jobName)
         QBCore.Functions.Notify("Job does not exist.", "error")
+
+        ClearPedTasks(playerPed)
+        FreezeEntityPosition(playerPed, false)
     end
 end)
 
