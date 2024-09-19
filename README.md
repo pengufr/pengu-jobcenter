@@ -1,12 +1,12 @@
 ## Pengu Job Center Script For Your QBCore Server!
 
-## Dependancy
+## Dependency
 * [qb-core](https://github.com/qbcore-framework/qb-core)
 * [ox_lib](https://github.com/overextended/ox_lib)
 * [qb-target](https://github.com/qbcore-framework/qb-target)
 * [qb-menu](https://github.com/qbcore-framework/qb-menu)
 
-## Optional Dependancy (fxmanifest.lua)
+## Optional Dependency (fxmanifest.lua)
 * [ox_target](https://github.com/overextended/ox_target)
 * [qtarget](https://github.com/overextended/qtarget/releases)
 
