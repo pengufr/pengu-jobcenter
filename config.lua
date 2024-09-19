@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 Config = {
     Target = 'qb-target',
     Menu = 'ox_lib',
@@ -18,7 +20,7 @@ Config = {
         {
             name = 'builder',
             label = 'Builder',
-            description = 'Builds various structures and fixes buildings',
+            description = 'Builds, fixes and constructs structures.',
             licenseItem = 'builder_license'
         },
         -- Add more jobs as needed

@@ -9,7 +9,7 @@ lua54 'yes'
 
 shared_script {
     'config.lua',
-    '@ox_lib/init.lua'
+    '@ox_lib/init.lua',
 }
 
 client_scripts {
@@ -18,6 +18,7 @@ client_scripts {
 
 server_scripts {
     'server/server.lua',
+    '@oxmysql/lib/MySQL.lua',
 }
 
 dependencies {

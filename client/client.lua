@@ -17,7 +17,7 @@ local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, job
         },
         {
             title = "Rank: " .. jobRank,
-            description = "Current rank for this job."
+            description = "Starting Rank For This Job"
         },
         {
             title = "Starting Pay: $" .. (jobPay or 0),
@@ -140,7 +140,8 @@ local function RegisterJobOptions(playerData)
             title = "Toggle Duty",
             description = "Toggle your duty status.",
             icon = 'fas fa-user-clock',
-            event = 'pengu-jobcenter:client:toggleDuty'
+            event = 'pengu-jobcenter:client:toggleDuty',
+            args = {}
         })
         QBCore.Functions.Notify("You are currently employed. You can only toggle your duty status.", "info")
     else
@@ -255,6 +256,12 @@ RegisterNetEvent('pengu-jobcenter:client:toggleDuty', function()
     TriggerServerEvent('pengu-jobcenter:server:toggleDuty')
 end)
 
-RegisterNetEvent('pengu-jobcenter:client:promote', function(newRank, jobName)
-    QBCore.Functions.Notify("Congrats! You've been promoted to rank " .. newRank .. " in " .. jobName .. "!", "success")
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    Wait(2000)
+    TriggerServerEvent('pengu-jobcenter:server:initPromotionCheck')
+end)
+
+AddEventHandler('onResourceStart', function(resource)
+    if GetCurrentResourceName() ~= resource then return end
+    TriggerServerEvent('pengu-jobcenter:server:initPromotionCheck')
 end)
