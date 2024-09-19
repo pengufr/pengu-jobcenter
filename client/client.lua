@@ -30,14 +30,30 @@ local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, job
         }
     }
 
-    lib.registerContext({
-        id = 'job_information_menu',
-        title = 'Job Information',
-        options = jobDetails,
-        menu = 'job_center_menu'
-    })
-    lib.showContext('job_information_menu')
-end
+    if Config.Menu == 'ox_lib' then
+        lib.registerContext({
+            id = 'job_information_menu',
+            title = 'Job Information',
+            options = jobDetails,
+            menu = 'job_center_menu'
+        })
+        lib.showContext('job_information_menu')
+    elseif Config.Menu == 'qb-menu' then
+        local qbJobDetails = {}
+        for _, detail in ipairs(jobDetails) do
+            table.insert(qbJobDetails, {
+                header = detail.title,
+                txt = detail.description,
+                params = {
+                    event = detail.event,
+                    args = detail.args
+                }
+            })
+        end
+        exports['qb-menu']:closeMenu()  
+            exports['qb-menu']:openMenu(qbJobDetails) 
+        end
+    end
 
 Citizen.CreateThread(function()
     DebugPrint("Starting Job Center blip creation.")
@@ -119,8 +135,8 @@ CreateThread(function()
 end)
 
 local function GetJobRank(playerJob, jobName)
-    if playerJob and jobName and QBCore.Shared.Jobs[jobName] then
-        local jobGrades = QBCore.Shared.Jobs[jobName].grades
+    if playerJob and jobName and Config.Jobs[jobName] then
+        local jobGrades = Config.Jobs[jobName].grades
         local playerGrade = playerJob.grade or '0'
         local jobGradeInfo = jobGrades[tostring(playerGrade)]
         return jobGradeInfo and jobGradeInfo.name or "Unknown Rank"
@@ -166,15 +182,30 @@ local function RegisterJobOptions(playerData)
         end
     end
 
-    lib.registerContext({
-        id = 'job_center_menu',
-        title = 'Job Center',
-        options = jobOptions,
-        menu = 'main'
-    })
-    DebugPrint("Menu registered with job options.")
-    lib.showContext('job_center_menu')
-end
+    if Config.Menu == 'ox_lib' then
+        lib.registerContext({
+            id = 'job_center_menu',
+            title = 'Job Center',
+            options = jobOptions,
+            menu = 'main'
+        })
+        DebugPrint("Menu registered with job options.")
+        lib.showContext('job_center_menu')
+    elseif Config.Menu == 'qb-menu' then
+        local qbJobOptions = {}
+        for _, option in ipairs(jobOptions) do
+            table.insert(qbJobOptions, {
+                header = option.title,
+                txt = option.description,
+                params = {
+                    event = option.event,
+                    args = option.args
+                }
+            })
+        end
+        exports['qb-menu']:openMenu(qbJobOptions)
+    end
+    end
 
 RegisterNetEvent('pengu-jobcenter:client:openMenu', function()
     DebugPrint("Opening job center menu.")
@@ -183,7 +214,7 @@ end)
 
 RegisterNetEvent('pengu-jobcenter:client:showJobInformation', function(job)
     DebugPrint("Showing information for job: " .. job.name)
-    local qbJob = QBCore.Shared.Jobs[job.name]
+    local qbJob = Config.Jobs[job.name]
     if qbJob then
         ShowJobInformation(
             job.name,
@@ -213,7 +244,7 @@ RegisterNetEvent('pengu-jobcenter:client:applyJob', function(jobName)
     end
     TaskPlayAnim(playerPed, "missfam4", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
 
-    local job = QBCore.Shared.Jobs[jobName]
+    local job = Config.Jobs[jobName]
     if job then
         DebugPrint("Job exists. Triggering server event to apply job: " .. jobName)
         TriggerServerEvent('pengu-jobcenter:server:applyJob', jobName, 0)

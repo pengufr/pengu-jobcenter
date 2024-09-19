@@ -5,7 +5,7 @@ local function NotifyPlayer(src, message, type)
 end
 
 local function GetJobByName(jobName)
-    return QBCore.Shared.Jobs[jobName] or nil
+    return QBCore.Shared.Config.PenguJobs[jobName] or nil
 end
 
 RegisterNetEvent('pengu-jobcenter:server:applyJob', function(jobName, defaultGrade)
@@ -92,7 +92,7 @@ end
 
 local playerJobsPromTimerStart = {}
 local playerPromTimer = {}
-local promoteTime = Config.PromoteTime
+local promoteTime = 12 * 60
 local function startPromotionTimer(src, player, timeStartFrom)
     playerJobsPromTimerStart[src] = true
     playerPromTimer[src] = timeStartFrom
@@ -104,7 +104,7 @@ local function startPromotionTimer(src, player, timeStartFrom)
                 local jobGradeint = player.PlayerData.job.grade.level or 0
                 local nexJobGradeint = jobGradeint + 1
 
-                local jobDetails = QBCore.Shared.Jobs[currentJobName]
+                local jobDetails = QBCore.Shared.Config.PenguJobs[currentJobName]
                 local jobGrade = tostring(jobGradeint)
                 local nextJobGrade = tostring(nexJobGradeint)
 
@@ -113,8 +113,7 @@ local function startPromotionTimer(src, player, timeStartFrom)
                     local nextJobGradeName = jobDetails.grades[nextJobGrade].name
 
                     player.Functions.SetJob(currentJobName, nexJobGradeint)
-                    NotifyPlayer(src, "You've been promoted from " .. jobGradeName .. " to " .. nextJobGradeName,
-                        "success")
+                    NotifyPlayer(src, "You've been promoted from " .. jobGradeName .. " to " .. nextJobGradeName, "success")
                 else
                     NotifyPlayer(src, "You have reached the highest rank or there was an issue with job grades.", "error")
                 end
@@ -130,8 +129,7 @@ AddEventHandler('playerDropped', function()
     if player then
         local citizenid = player.PlayerData.citizenid
         if playerJobsPromTimerStart[src] and playerPromTimer[src] then
-            MySQL.Async.execute('UPDATE player_duty_time SET duty_time = ? WHERE citizenid = ?',
-                { playerPromTimer[src], citizenid })
+            MySQL.Async.execute('UPDATE player_duty_time SET duty_time = ? WHERE citizenid = ?', { playerPromTimer[src], citizenid })
             playerJobsPromTimerStart[src] = nil
             playerPromTimer[src] = nil
         end
@@ -143,9 +141,8 @@ RegisterNetEvent('pengu-jobcenter:server:initPromotionCheck', function()
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
 
-    local result = MySQL.Sync.fetchSingle('SELECT * FROM player_duty_time WHERE citizenid = ?',
-        { player.PlayerData.citizenid })
-    if result and result.duty_time then
+    local result = MySQL.Sync.fetchSingle('SELECT * FROM player_duty_time WHERE citizenid = ?', {player.PlayerData.citizenid})
+	if result and result.duty_time then
         local timeStartFrom = result.duty_time
         startPromotionTimer(src, player, timeStartFrom)
     end
@@ -165,12 +162,10 @@ RegisterNetEvent('pengu-jobcenter:server:toggleDuty', function()
             local status = isOnDuty and "off duty" or "on duty"
             if not isOnDuty then
                 startPromotionTimer(src, player, 0)
-                MySQL.Async.insert(
-                'INSERT INTO player_duty_time (citizenid, duty_time) VALUES (:cid, :dt) ON DUPLICATE KEY UPDATE duty_time = ?',
-                    {
-                        ['cid'] = player.PlayerData.citizenid,
-                        ['dt'] = 0,
-                    })
+                MySQL.Async.insert('INSERT INTO player_duty_time (citizenid, duty_time) VALUES (:cid, :dt) ON DUPLICATE KEY UPDATE duty_time = ?', {
+                    ['cid'] = player.PlayerData.citizenid,
+                    ['dt'] = 0,
+                })
             else
                 playerJobsPromTimerStart[src] = nil
                 playerPromTimer[src] = nil
