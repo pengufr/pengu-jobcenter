@@ -1,11 +1,11 @@
 Config = {}
 
 Config = {
-    Target = 'qb-target', -- Can be 'qb-target' or 'ox_target'
-    Menu = 'ox_lib', -- Can be 'ox_lib' or 'qb-menu'
-    ProgressBar = 'ox_lib', -- Can be 'ox_lib' or 'qb-progress'
+    Target = 'qb-target',    -- Can be 'qb-target' or 'ox_target' or 'qtarget'
+    Menu = 'ox_lib',         -- Can be 'ox_lib' or 'qb-menu'
+    ProgressBar = 'ox_lib',  -- Can be 'ox_lib' or 'progressbar'
+    PromotionTime = 12 * 60, -- 12 Hours in Minutes
     JobCenterLocation = vector4(-267.58, -959.16, 31.22, 211),
-    PaymentTime = 10000, -- Time in milliseconds for job payment
     Debug = true,
     NPC = {
         model = 'a_m_m_business_01',
@@ -19,11 +19,26 @@ Config = {
         name = 'Job Center',
     },
 }
+Config.Misc = {
+    ["id_card"] = {
+        name = "ID Card",
+        description = "A valid identification card.",
+        price = 100,
+    },
+    ["driver_license"] = {
+        name = "Driver's License",
+        description = "Official document allowing you to drive.",
+        price = 100,
+    },
+}
+
 Config.Jobs = {
     builder = {
         name = 'builder',
         label = 'Builder',
-        description = 'Builds, fixes, and constructs structures.',
+        description = 'A skilled worker who constructs buildings and other structures.',
+        defaultDuty = false,
+        offDutyPay = false,
         licenseItem = 'builder_license',
         grades = {
             ['0'] = { name = 'Recruit', payment = 200 },
@@ -31,6 +46,5 @@ Config.Jobs = {
             ['2'] = { name = 'Experienced', payment = 350 },
         },
     },
-    -- Add more jobs here in the same format
+    -- You can add more jobs here in the same format
 }
-
