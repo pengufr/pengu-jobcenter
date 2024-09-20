@@ -17,14 +17,16 @@ client_scripts {
 }
 
 server_scripts {
-    'server/server.lua',
     '@oxmysql/lib/MySQL.lua',
+    'server/server.lua',
 }
 
 dependencies {
     'qb-core',
     'ox_lib',
     'qb-target',
+    'qb-menu',
+    'progressbar',
     -- 'ox_target',  -- Uncomment if using ox_target
     -- 'qtarget'     -- Uncomment if using qtarget
 }
