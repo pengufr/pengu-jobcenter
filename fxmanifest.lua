@@ -26,7 +26,6 @@ dependencies {
     'ox_lib',
     'qb-target',
     'qb-menu',
-    'progressbar',
     -- 'ox_target',  -- Uncomment if using ox_target
     -- 'qtarget'     -- Uncomment if using qtarget
 }

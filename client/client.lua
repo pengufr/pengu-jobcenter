@@ -54,10 +54,10 @@ local function ShowJobInformation(jobName, jobLabel, jobDescription, jobPay, job
                 }
             })
         end
-        exports['qb-menu']:closeMenu()
-        exports['qb-menu']:openMenu(qbJobDetails)
+        exports['qb-menu']:closeMenu()  
+            exports['qb-menu']:openMenu(qbJobDetails) 
+        end
     end
-end
 
 CreateThread(function()
     DebugPrint("Starting Job Center blip creation.")
@@ -186,13 +186,6 @@ local function RegisterJobOptions(playerData)
         end
     end
 
-    table.insert(jobOptions, {
-        title = 'Buy Misc Items',
-        description = 'Purchase miscellaneous items like ID cards, licenses, etc.',
-        icon = 'fas fa-shopping-cart',
-        event = 'pengu-jobcenter:client:buyMiscItems',
-    })
-
     if Config.Menu == 'ox_lib' then
         lib.registerContext({
             id = 'job_center_menu',
@@ -216,7 +209,7 @@ local function RegisterJobOptions(playerData)
         end
         exports['qb-menu']:openMenu(qbJobOptions)
     end
-end
+    end
 
 RegisterNetEvent('pengu-jobcenter:client:buyMiscItems', function()
     DebugPrint("Opening miscellaneous items menu.")
