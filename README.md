@@ -5,20 +5,24 @@
 * [ox_lib](https://github.com/overextended/ox_lib)
 * [qb-target](https://github.com/qbcore-framework/qb-target)
 * [qb-menu](https://github.com/qbcore-framework/qb-menu)
+* [progressbar](https://github.com/qbcore-framework/progressbar)
 
 ## Optional Dependency (fxmanifest.lua)
 * [ox_target](https://github.com/overextended/ox_target)
 * [qtarget](https://github.com/overextended/qtarget/releases)
 
 ## Preview
-* [Preview](Soon)
+* [Preview] - Soon
 
 ## Job Center Features
 * Job Application: Players can apply for various jobs.
 * Job License Management: Automatically grants job licenses upon job acceptance.
 * Duty Toggle: Players can toggle their duty status on/off.
 * Job Information: When you select a you can see the job name, job starting rank, and the starting pay sallary.
-* Job Rank Up System: When you are on the job for a certain amount of hours (Configurable) you will get promoted wich will increase your pay + rank.
+* Job Rank Up System: When you are on the job for a certain amount of hours (Configurable) you will get promoted wich will increase your rank.
+* Job Payemnt System: Once you reach new ranks you get a salary based off your ranks
+* Job Progress: If players disconnect it will save there time until a promotion so they dont lose progress
+* A LOT MORE
 
 ## Installation Guide | Version 1.0.0
 
