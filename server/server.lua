@@ -11,10 +11,7 @@ end
 RegisterNetEvent('pengu-jobcenter:server:applyJob', function(jobName)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-
-    -- this is bad, reduce line count by using a guard clause :)
     if not Player then return end
-
     if Player.PlayerData.job.name == 'unemployed' then
         local job = GetJobByName(jobName)
 
@@ -54,6 +51,8 @@ end
 function NotifyPlayer(playerId, message, type)
     TriggerClientEvent('QBCore:Notify', playerId, message, type)
 end
+
+
 
 local playerJobsPromTimerStart = {}
 local playerPromTimer = {}

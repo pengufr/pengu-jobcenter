@@ -61,20 +61,24 @@ end
 
 CreateThread(function()
     DebugPrint("Starting Job Center blip creation.")
-    local blip = AddBlipForCoord(Config.JobCenterBlip.coords)
-    SetBlipSprite(blip, Config.JobCenterBlip.sprite)
-    SetBlipDisplay(blip, 4)
-    SetBlipScale(blip, Config.JobCenterBlip.scale)
-    SetBlipColour(blip, Config.JobCenterBlip.color)
-    SetBlipAsShortRange(blip, true)
+    for _, location in pairs(Config.JobCenterLocations) do
+        -- Ensure we're accessing the correct coordinates for the blip
+        local blip = AddBlipForCoord(location.blip.coords)
+        SetBlipSprite(blip, location.blip.sprite)
+        SetBlipDisplay(blip, 4)
+        SetBlipScale(blip, location.blip.scale)
+        SetBlipColour(blip, location.blip.color)
+        SetBlipAsShortRange(blip, true)
 
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString(Config.JobCenterBlip.name)
-    EndTextCommandSetBlipName(blip)
-    DebugPrint("Blip for Job Center created successfully.")
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(location.blip.name)
+        EndTextCommandSetBlipName(blip)
+    end
+
+    DebugPrint("Blip(s) for Job Center created successfully.")
 end)
 
-local function SetupNPC(npcModel, jobCenterCoords)
+local function SetupNPC(npcModel, location)
     DebugPrint("Setting up NPC: " .. npcModel)
     RequestModel(GetHashKey(npcModel))
     while not HasModelLoaded(GetHashKey(npcModel)) do
@@ -82,38 +86,46 @@ local function SetupNPC(npcModel, jobCenterCoords)
         Wait(10)
     end
 
-    local npcPed = CreatePed(4, GetHashKey(npcModel), jobCenterCoords.x, jobCenterCoords.y, jobCenterCoords.z - 1,
-        jobCenterCoords.w, false, true)
+    -- Access the coordinates from the first location in JobCenterLocations
+    local npcPed = CreatePed(4, GetHashKey(npcModel), location.coords.x, location.coords.y, location.coords.z - 1, location.coords.w, false, true)
     SetEntityInvincible(npcPed, true)
     SetBlockingOfNonTemporaryEvents(npcPed, true)
     FreezeEntityPosition(npcPed, true)
     TaskStartScenarioInPlace(npcPed, "WORLD_HUMAN_CLIPBOARD", 0, true)
-    DebugPrint("NPC created successfully at coordinates: " ..
-        jobCenterCoords.x .. ", " .. jobCenterCoords.y .. ", " .. jobCenterCoords.z)
+    DebugPrint("NPC created successfully at coordinates: " .. location.coords.x .. ", " .. location.coords.y .. ", " .. location.coords.z)
     return npcPed
 end
 
 local function SetupTargeting(npcPed)
     DebugPrint("Setting up targeting system for NPC.")
     local targetSystem = Config.Target
-    if exports[targetSystem] then
-        local targetFunc = targetSystem == 'drawtext' and function()
-            CreateThread(function()
-                while true do
-                    local playerCoords = GetEntityCoords(PlayerPedId())
-                    local distance = #(playerCoords - Config.JobCenterLocation)
 
-                    if distance < 2.5 then
-                        DrawText3D(Config.JobCenterLocation.x, Config.JobCenterLocation.y, Config.JobCenterLocation.z,
-                            "[E] Browse Jobs")
-                        if IsControlJustReleased(0, 38) then
-                            TriggerEvent('pengu-jobcenter:client:openMenu')
+    if exports[targetSystem] then
+        -- Always define targetFunc to avoid nil issues
+        local targetFunc = function()
+            DebugPrint("No valid targeting function defined.")
+        end
+
+        -- Adjust for different targeting systems
+        if targetSystem == 'drawtext' then
+            targetFunc = function()
+                CreateThread(function()
+                    while true do
+                        local playerCoords = GetEntityCoords(PlayerPedId())
+                        local npcCoords = Config.JobCenterLocations[1].coords  -- Accessing coords from the first location
+                        local distance = #(playerCoords - vector3(npcCoords.x, npcCoords.y, npcCoords.z))
+
+                        if distance < 2.5 then
+                            DrawText3D(npcCoords.x, npcCoords.y, npcCoords.z, "[E] Browse Jobs")
+                            if IsControlJustReleased(0, 38) then
+                                TriggerEvent('pengu-jobcenter:client:openMenu')
+                            end
                         end
+                        Wait(0)
                     end
-                    Wait(0)
-                end
-            end)
-        end or function()
+                end)
+            end
+        else
             local options = {
                 {
                     type = "client",
@@ -125,6 +137,7 @@ local function SetupTargeting(npcPed)
             exports[targetSystem]:AddTargetEntity(npcPed, { options = options, distance = 2.5 })
         end
 
+        -- Now it's safe to call targetFunc
         targetFunc()
         DebugPrint("Targeting system set up successfully.")
     else
@@ -132,11 +145,13 @@ local function SetupTargeting(npcPed)
     end
 end
 
+
 CreateThread(function()
     DebugPrint("Initializing NPC and targeting system setup.")
-    local npcPed = SetupNPC(Config.NPC.model, Config.JobCenterLocation)
+    local npcPed = SetupNPC(Config.NPC.model, Config.JobCenterLocations[1])  -- Accessing the first job center location
     SetupTargeting(npcPed)
 end)
+
 
 local function GetJobRank(playerJob, jobName)
     if playerJob and jobName and Config.Jobs[jobName] then
